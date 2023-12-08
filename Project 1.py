@@ -3,21 +3,40 @@ from tkinter import messagebox
 from typing import Dict
 
 class Candidate:
+    """Class representing a candidate in the election."""
+
     def __init__(self, name: str) -> None:
+        """Initialize a Candidate object.
+
+        Args:
+            name (str): The name of the candidate.
+        """
         self.name = name
         self.votes = 0
 
 class VotingApplication:
+    """Class representing the main voting application."""
+
     def __init__(self, master: tk.Tk) -> None:
+        """Initialize the VotingApplication.
+
+        Args:
+            master (tk.Tk): The Tkinter master window.
+        """
         self.master = master
         self.master.title("Voting App")
 
+        # Create candidates with initial votes set to 0
         self.candidates: Dict[int, Candidate] = {i: Candidate(name) for i, name in enumerate(["John", "Jane", "Bob", "Alice"], start=1)}
+
+        # Number of remaining votes for each user
         self.remaining_votes = 4
 
+        # Initialize the main menu
         self.create_main_menu()
 
     def create_main_menu(self) -> None:
+        """Create the main menu GUI."""
         self.clear_widgets()
 
         tk.Label(self.master, text="MAIN MENU", font=("Helvetica", 16)).pack(pady=20)
@@ -29,6 +48,7 @@ class VotingApplication:
         self.display_vote_totals()
 
     def show_voting_popup(self) -> None:
+        """Display the voting popup."""
         self.clear_widgets()
 
         if self.remaining_votes > 0:
@@ -57,17 +77,24 @@ class VotingApplication:
             self.display_final_results()
 
     def cast_vote(self, candidate_num: int) -> None:
+        """Cast a vote for a candidate.
+
+        Args:
+            candidate_num (int): The number representing the selected candidate.
+        """
         if self.remaining_votes > 0:
             self.candidates[candidate_num].votes += 1
             self.remaining_votes -= 1
             self.show_voting_popup()
 
     def skip_vote(self) -> None:
+        """Skip the voting for the current round."""
         if self.remaining_votes > 0:
             self.remaining_votes -= 1
             self.show_voting_popup()
 
     def display_final_results(self) -> None:
+        """Display the final voting results."""
         self.clear_widgets()
 
         tk.Label(self.master, text="Voting has ended. Final results:", font=("Helvetica", 16)).pack(pady=20)
@@ -80,28 +107,38 @@ class VotingApplication:
         self.create_main_menu()
 
     def reset_voting(self) -> None:
+        """Reset the voting process."""
         self.remaining_votes = 4
         self.show_voting_popup()
 
     def confirm_exit(self) -> None:
+        """Display a confirmation dialog before exiting."""
         confirmation = messagebox.askyesno("Exit", "Are you sure you want to exit?")
         if confirmation:
             self.master.destroy()
 
     def clear_widgets(self) -> None:
+        """Clear all widgets in the master window."""
         for widget in self.master.winfo_children():
             widget.destroy()
 
     def display_vote_totals(self) -> None:
+        """Display the current vote totals for each candidate."""
         for candidate_num, candidate in self.candidates.items():
             tk.Label(self.master, text=f"{candidate.name} Votes: {candidate.votes}", font=("Helvetica", 12)).pack()
 
         tk.Label(self.master, text=f"Overall Total Votes: {self.calculate_overall_total()}", font=("Helvetica", 12)).pack(pady=15)
 
     def calculate_overall_total(self) -> int:
+        """Calculate the overall total number of votes.
+
+        Returns:
+            int: The overall total number of votes.
+        """
         return sum(candidate.votes for candidate in self.candidates.values())
 
 def main() -> None:
+    """Main function to run the voting application."""
     root = tk.Tk()
     root.geometry("800x500")  # Set the initial size of the window
     app = VotingApplication(root)
